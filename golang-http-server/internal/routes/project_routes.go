@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	"golang-http-server/internal/core/errors"
@@ -11,6 +12,12 @@ import (
 )
 
 func (app *App) registerProjectRoutes(mux *http.ServeMux) {
+	app.Registry.Add("GET", "/api/v1/projects", nil, reflect.TypeOf(dto.ProjectListResponse{}), reflect.TypeOf(dto.ProjectListQuery{}))
+	app.Registry.Add("GET", "/api/v1/projects/{id}", nil, reflect.TypeOf(dto.ProjectResponse{}), nil)
+	app.Registry.Add("POST", "/api/v1/projects", reflect.TypeOf(dto.ProjectCreate{}), reflect.TypeOf(dto.ProjectResponse{}), nil)
+	app.Registry.Add("PATCH", "/api/v1/projects/{id}", reflect.TypeOf(dto.ProjectUpdate{}), reflect.TypeOf(dto.ProjectResponse{}), nil)
+	app.Registry.Add("DELETE", "/api/v1/projects/{id}", nil, nil, nil)
+
 	mux.HandleFunc("GET /api/v1/projects", app.listProjects)
 	mux.HandleFunc("GET /api/v1/projects/{id}", app.getProject)
 	mux.HandleFunc("POST /api/v1/projects", app.createProject)

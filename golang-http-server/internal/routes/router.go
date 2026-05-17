@@ -13,9 +13,10 @@ type App struct {
 	ProjectService    *service.ProjectService
 	TaskService       *service.TaskService
 	AttachmentService *service.AttachmentService
+	Registry          *Registry
 }
 
-func NewApp(s3Client *core.S3Client) *App {
+func NewApp(s3Client *core.S3Client, reg *Registry) *App {
 	sqlDB := db.GetDB()
 
 	projectRepo := repository.NewProjectRepository(sqlDB)
@@ -26,6 +27,7 @@ func NewApp(s3Client *core.S3Client) *App {
 		ProjectService:    service.NewProjectService(projectRepo),
 		TaskService:       service.NewTaskService(taskRepo),
 		AttachmentService: service.NewAttachmentService(attachmentRepo, s3Client),
+		Registry:          reg,
 	}
 }
 

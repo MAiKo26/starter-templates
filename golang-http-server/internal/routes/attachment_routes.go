@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	"golang-http-server/internal/core/errors"
@@ -11,6 +12,11 @@ import (
 )
 
 func (app *App) registerAttachmentRoutes(mux *http.ServeMux) {
+	app.Registry.Add("GET", "/api/v1/tasks/{taskId}/attachments", nil, reflect.TypeOf(dto.AttachmentListResponse{}), reflect.TypeOf(dto.AttachmentListQuery{}))
+	app.Registry.Add("POST", "/api/v1/tasks/{taskId}/attachments", reflect.TypeOf(dto.AttachmentCreate{}), reflect.TypeOf(dto.AttachmentUploadResponse{}), nil)
+	app.Registry.Add("GET", "/api/v1/attachments/{id}/download", nil, reflect.TypeOf(map[string]string{}), nil)
+	app.Registry.Add("DELETE", "/api/v1/attachments/{id}", nil, nil, nil)
+
 	mux.HandleFunc("GET /api/v1/tasks/{taskId}/attachments", app.listAttachments)
 	mux.HandleFunc("POST /api/v1/tasks/{taskId}/attachments", app.createAttachment)
 	mux.HandleFunc("GET /api/v1/attachments/{id}/download", app.getAttachmentDownload)

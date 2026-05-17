@@ -8,10 +8,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: starter
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
   minio:
-    image: minio/minio:RELEASE.2025-10-15T17-29-55Z
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -23,7 +23,7 @@ services:
       - minio_data:/data
 
   redis:
-    image: redis:7-alpine
+    image: redis:8.4.2-alpine
     ports:
       - "6379:6379"
 

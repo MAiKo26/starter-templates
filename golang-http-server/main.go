@@ -4,20 +4,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"golang-http-server/internal/core"
+	"golang-http-server/internal/db"
+	"golang-http-server/internal/dto"
+	"golang-http-server/internal/middleware"
+	"golang-http-server/internal/routes"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"golang-http-server/internal/core"
-	"golang-http-server/internal/db"
-	"golang-http-server/internal/dto"
-	"golang-http-server/internal/middleware"
-	"golang-http-server/internal/routes"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	cfg := core.LoadConfig()
 
 	core.InitLogger(cfg.LogLevel, cfg.LogPretty)
@@ -44,7 +47,9 @@ func main() {
 	}
 	logger.Info("storage initialized", "bucket", cfg.MinioBucketName)
 
-	app := routes.NewApp(s3Client)
+	reg := routes.NewRegistry()
+
+	app := routes.NewApp(s3Client, reg)
 
 	mux := http.NewServeMux()
 
@@ -62,6 +67,8 @@ func main() {
 	handler = loggerHandler(handler)
 	handler = errorHandler(handler)
 	handler = rateLimitHandler(handler)
+
+	mux.HandleFunc("GET /docs", reg.DocsHandler())
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
