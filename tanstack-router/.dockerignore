@@ -1,0 +1,15 @@
+node_modules
+.env
+.env.local
+.env.*.local
+dist
+build
+.tanstack
+.next
+out
+.DS_Store
+*.tsbuildinfo
+*.log
+coverage
+.vscode
+.idea

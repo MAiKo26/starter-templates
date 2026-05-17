@@ -1,0 +1,23 @@
+FROM oven/bun:1-alpine AS base
+
+FROM base AS deps
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN apk add --no-cache libc6-compat && corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm install --frozen-lockfile
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm build
+
+FROM base AS runner
+WORKDIR /app
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 bunjs
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
+USER bunjs
+EXPOSE 3000
+CMD ["bun", "run", "preview"]
