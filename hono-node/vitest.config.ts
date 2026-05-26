@@ -1,4 +1,5 @@
 import path from "node:path";
+
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -11,11 +12,16 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["__tests__/**/*.test.ts"],
+    fileParallelism: false,
+    globalSetup: "./vitest.setup.ts",
     env: {
       NODE_ENV: "test",
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/starter_test",
+      DATABASE_URL:
+        "postgresql://postgres:postgres@localhost:5432/starter_test",
       BETTER_AUTH_SECRET: "test-secret-key-for-testing-purposes-only-32chars",
       BETTER_AUTH_URL: "http://localhost:8000",
+      MINIO_SECURE: "false",
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000",
     },
     coverage: {
       provider: "v8",
